@@ -1,0 +1,53 @@
+#Spremeni spremenljivko f (vrstica 12, pod do datoteke disolucija_python_2) na lokacijo kjer si to datoteko shranil na računalnik. Poženi kodo in izrisal se bo graf.
+
+import numpy as np
+import scipy.stats
+from math import pi
+import matplotlib.pyplot as plt
+import pandas as pd
+plt.style.use('seaborn-darkgrid')
+import scipy.signal
+
+
+f = r"C:\Users\blaz-\Desktop\Mag ekspirementalno delo\dissolution\disolucija_python_2.csv"
+
+
+
+
+df = pd.read_csv(f, decimal=",",delimiter=";")
+df = df[df.Time < 100]
+
+savgol_average = []
+for i in df.columns[1:]:
+    savgol_average.append(scipy.signal.savgol_filter(df[i], 9, 3))
+savgol_average = np.array(savgol_average)
+savgol_average[ savgol_average > 1] = 1
+savgol_average[ savgol_average < 0] = 0
+
+savgol_average[5] = scipy.signal.savgol_filter(savgol_average[5], 3, 1)
+#plt.plot(df.Time, savgol_average[5])
+
+
+
+
+fig = plt.figure(figsize=(8,6))
+plt.plot(df["Time"], savgol_average[1], label="D1 120 vrt./min", color="lime", linestyle="-.")
+plt.plot(df["Time"], savgol_average[5], label="D1 150 vrt./min", color="navy", linestyle="-.")
+plt.plot(df["Time"], savgol_average[9], label="D1 200 vrt./min", color="orange", linestyle="-.")
+plt.plot(df["Time"], savgol_average[3], label="D2 120 vrt./min", color="lime", linestyle="--")
+plt.plot(df["Time"], savgol_average[7], label="D2 150 vrt./min", color="navy", linestyle="--")
+plt.plot(df["Time"], savgol_average[10], label="D2 200 vrt./min", color="orange", linestyle="--")
+plt.plot(df["Time"], savgol_average[2], label="D3 120 vrt./min", color="lime", linestyle=":")
+plt.plot(df["Time"], savgol_average[6], label="D3 150 vrt./min", color="navy", linestyle=":")
+plt.plot(df["Time"], savgol_average[11], label="D3 200 vrt./min", color="orange", linestyle=":")
+plt.plot(df["Time"], savgol_average[12], label="D3 300 vrt./min", color="r", linestyle=":")
+plt.plot(df["Time"], savgol_average[0], label="D4 120 vrt./min", color="lime")
+plt.plot(df["Time"], savgol_average[4], label="D4 150 vrt./min", color="navy")
+plt.plot(df["Time"], savgol_average[8], label="D4 200 vrt./min", color="orange")
+
+plt.legend(loc='upper right', bbox_to_anchor=(1.3, 0.8))
+plt.xlim(right=80, left=0)
+plt.ylim(bottom=0)
+plt.xlabel("Čas [s]")
+plt.ylabel("Normalizirana koncentracija")
+plt.show()
