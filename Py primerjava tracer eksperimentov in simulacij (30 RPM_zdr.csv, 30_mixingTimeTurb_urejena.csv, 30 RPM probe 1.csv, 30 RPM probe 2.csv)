@@ -1,0 +1,122 @@
+#Podatki1 in podatki2 je ista datoteka. To so meritve iz sonde za prevodnosti
+#conc_glob1 in conc_glob2 je ista datoteka. Je globalna koncentracija izračunana iz simulacij
+#Filename 1 je datoteka z rezultati iz eksperimentov sonda 1
+#Filename 2 je datoteka z rezultati iz eksperimentov sonda 2
+
+#Spremeni se le omenjene datotek
+
+
+import pandas as pd
+import matplotlib.pyplot as plt
+import scipy.signal as sp
+plt.style.use('seaborn-darkgrid')
+sfont = {'fontname':'serif'}
+plt.rcParams["font.family"] = "serif"
+
+
+
+podatki1 = pd.read_csv(r"C:\Users\blaz-\Desktop\Mag ekspirementalno delo\1.5L pitch blade no baffles skupaj\30 RPM_zdr.csv", delimiter=";", decimal=",")
+podatki2 = pd.read_csv(r"C:\Users\blaz-\Desktop\Mag ekspirementalno delo\1.5L pitch blade no baffles skupaj\30 RPM_zdr.csv", delimiter=";", decimal=",")
+conc_glob1 = pd.read_csv(r"C:\Users\blaz-\Desktop\Mag ekspirementalno delo\Podatki iz simulacij\najnovejsi podatki\RC1_1c6L_p_25sC_n_no_baffles_Nx20_conductivity\30_mixingTimeTurb_urejena.csv")
+conc_glob2 = pd.read_csv(r"C:\Users\blaz-\Desktop\Mag ekspirementalno delo\Podatki iz simulacij\najnovejsi podatki\RC1_1c6L_p_25sC_n_no_baffles_Nx20_conductivity\30_mixingTimeTurb_urejena.csv")
+filename = r"C:\Users\blaz-\Desktop\Mag ekspirementalno delo\Podatki iz simulacij\najnovejsi podatki\RC1_1c6L_p_25sC_n_no_baffles_Nx20_conductivity\30 RPM probe 1.csv"
+filename2 = r"C:\Users\blaz-\Desktop\Mag ekspirementalno delo\Podatki iz simulacij\najnovejsi podatki\RC1_1c6L_p_25sC_n_no_baffles_Nx20_conductivity\30 RPM probe 2.csv"
+
+fig, ((ax1, ax2)) = plt.subplots(nrows=1, ncols=2, sharey=True, figsize=(12,8))
+
+
+
+#PROBE 1
+
+
+#Eksperimenti
+
+del_podatki1 = podatki1[["Standardized 11", "Standardized 12", "Standardized 13", "Standardized 14", "Standardized 15"]]
+podatki1["Mean"] = del_podatki1.mean(axis=1)
+
+
+#Globalna koncentracija simulacija
+
+conc_glob1["Cmin normalized"] = (conc_glob1["Cmin"] - conc_glob1["Cmin"].min()) / (conc_glob1["Cmin"].max() - conc_glob1["Cmin"].min())
+conc_glob1["Cmax normalized"] = (conc_glob1["Cmax"] / conc_glob1["Cmax"].min())
+
+eq_conc1 = conc_glob1.iloc[-1]["Mean"]
+
+
+#ax1.plot(conc_glob1["Time"], conc_glob1["Cmin normalized"])
+#ax1.plot(conc_glob1["Time"], conc_glob1["Cmax normalized"])
+
+
+#Simulacija
+
+df1 = pd.read_csv(filename)
+df1["Normalizirana"] = ((df1["C ( block=2)"] - df1["C ( block=2)"].min()) / (eq_conc1 - df1["C ( block=2)"].min()))
+ax1.plot(df1["Time"], df1["Normalizirana"], label="Simulacija", color="orange")
+
+#Grafi
+ax1.plot(podatki1["Cas1"], podatki1["Standardized 11"], linewidth=0.5, linestyle="dotted", color="darkgoldenrod", label="Eksperimenti")
+ax1.plot(podatki1["Cas2"], podatki1["Standardized 12"], linewidth=0.5, linestyle="dotted", color="darkgoldenrod")
+ax1.plot(podatki1["Cas3"], podatki1["Standardized 13"], linewidth=0.5, linestyle="dotted", color="darkgoldenrod")
+ax1.plot(podatki1["Cas4"], podatki1["Standardized 14"], linewidth=0.5, linestyle="dotted", color="darkgoldenrod")
+ax1.plot(podatki1["Cas5"], podatki1["Standardized 15"], linewidth=0.5, linestyle="dotted", color="darkgoldenrod")
+#ax1.plot(podatki1["Cas4"], podatki1["Standardized 16"], linewidth=0.5, linestyle="dotted", color="darkgoldenrod")
+ax1.plot(podatki1["Cas4"], podatki1["Mean"], linewidth=2, label="Povprečje eksperimentov", color="navy")
+ax1.hlines(y=0.95, xmin=0, xmax=180, linestyle="dotted", label="Območje pomešanja 95% - 105%")
+ax1.hlines(y=1.05, xmin=0, xmax=180, linestyle="dotted")
+ax1.set_title("Sonda 1")
+ax1.set_xlim(left=0, right=42)
+ax1.set_ylim(top=2, bottom=0)
+ax1.set_xlabel("Čas [s]")
+ax1.set_ylabel("Min-Max Normalizirana vrednost prevodnosti")
+
+
+
+#PROBE 2
+
+
+#Eksperimenti
+
+del_podatki2 = podatki2[["Standardized 21", "Standardized 22", "Standardized 23", "Standardized 24", "Standardized 25"]]
+podatki2["Mean"] = del_podatki2.mean(axis=1)
+
+
+#Globalna koncentracija simulacija
+
+conc_glob2["Cmin normalized"] = (conc_glob2["Cmin"] - conc_glob2["Cmin"].min()) / (conc_glob2["Cmin"].max() - conc_glob2["Cmin"].min())
+conc_glob2["Cmax normalized"] = (conc_glob2["Cmax"] / conc_glob2["Cmax"].min())
+eq_conc2 = conc_glob2.iloc[-1]["Mean"]
+
+
+#ax2.plot(conc_glob2["Time"], conc_glob2["Cmin normalized"])
+#ax2.plot(conc_glob2["Time"], conc_glob2["Cmax normalized"])
+
+
+#Simulacija
+
+df2 = pd.read_csv(filename2)
+df2["Normalizirana"] = ((df2["C ( block=2)"] - df2["C ( block=2)"].min()) / (eq_conc2 - df2["C ( block=2)"].min()))
+
+ax2.plot(df2["Time"], df2["Normalizirana"], label="Simulacija", color="orange")
+
+
+#Grafi
+ax2.plot(podatki2["Cas1"], podatki2["Standardized 21"], linewidth=0.5, linestyle="dotted", color="darkgoldenrod", label="Eksperimenti")
+ax2.plot(podatki2["Cas2"], podatki2["Standardized 22"], linewidth=0.5, linestyle="dotted", color="darkgoldenrod")
+ax2.plot(podatki2["Cas3"], podatki2["Standardized 23"], linewidth=0.5, linestyle="dotted", color="darkgoldenrod")
+ax2.plot(podatki2["Cas4"], podatki2["Standardized 24"], linewidth=0.5, linestyle="dotted", color="darkgoldenrod")
+ax2.plot(podatki2["Cas5"], podatki2["Standardized 25"], linewidth=0.5, linestyle="dotted", color="darkgoldenrod")
+#ax2.plot(podatki2["Cas6"], podatki2["Standardized 26"], linewidth=0.5, linestyle="dotted", color="darkgoldenrod")
+ax2.plot(podatki2["Cas4"], podatki2["Mean"], linewidth=2, label="Povprečje eksperimentov", color="navy")
+ax2.hlines(y=0.95, xmin=0, xmax=180, linestyle="dotted", label="Območje pomešanja 95% - 105%")
+ax2.hlines(y=1.05, xmin=0, xmax=180, linestyle="dotted")
+ax2.set_title("Sonda 2")
+ax2.set_xlim(right=42)
+ax2.set_xlim(left=0)
+ax2.set_ylim(top=3, bottom=0)
+ax2.set_xlabel("Čas [s]")
+ax2.legend(loc="lower right")
+
+
+#figure
+fig.suptitle("Normalizirana vrednost prevodnosti pri 30RPM")
+fig.tight_layout(rect=[0, 0.03, 1, 0.95])
