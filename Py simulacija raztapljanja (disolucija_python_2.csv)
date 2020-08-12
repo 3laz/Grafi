@@ -1,0 +1,259 @@
+#Spremeni spremenljivko f na pot do datoteke disolucija_python_2.csv
+
+import numpy as np
+import scipy.stats
+from math import pi
+import matplotlib.pyplot as plt
+import pandas as pd
+plt.style.use('seaborn-darkgrid')
+import scipy.signal
+
+
+f = r"C:\Users\blaz-\Desktop\Mag ekspirementalno delo\dissolution\disolucija_python_2.csv"
+
+
+df = pd.read_csv(f, decimal=",",delimiter=";")
+#df = df.drop(["Unnamed: 14", "Unnamed: 15","Unnamed: 16","Unnamed: 17","Unnamed: 18"],axis=1)
+df = df[df.Time < 100]
+
+savgol_average = []
+for i in df.columns[1:]:
+    savgol_average.append(scipy.signal.savgol_filter(df[i], 11, 3))
+savgol_average = np.array(savgol_average)
+savgol_average[ savgol_average > 1] = 1
+savgol_average[ savgol_average < 0] = 0
+#for i in range(len(savgol_average)):
+#    plt.plot(df["Time"], savgol_average[i])
+
+
+df = df[df.Time < 45]
+df["Savgol1"] = (1/0.45542909)*savgol_average[0][:9]
+df["Savgol2"] = (1/0.45)*savgol_average[1][:9]
+df["Savgol3"] = (1/0.62)*savgol_average[2][:9]
+df["Savgol4"] = (1/0.37)*savgol_average[3][:9]
+df["Savgol5"] = (1/0.58)*savgol_average[4][:9]
+df["Savgol6"] = (1/0.4)*savgol_average[5][:9]
+df["Savgol7"] = (1/0.855)*savgol_average[6][:9]
+df["Savgol8"] = (1/0.61)*savgol_average[7][:9]
+df["Savgol9"] = (1/0.82)*savgol_average[8][:9]
+df["Savgol10"] = (1/0.80)*savgol_average[9][:9]
+df["Savgol11"] = (1/0.94)*savgol_average[10][:9]
+df["Savgol12"] = (1/0.96)*savgol_average[11][:9]
+df["Savgol13"] = (1/0.98)*savgol_average[12][:9]
+
+for i in range(14,27):
+    for j in range(len(df[df.columns[i]])):
+        if df[df.columns[i]][j] > 1:
+            df[df.columns[i]][j] = 1
+
+   
+hitrost = [0.0905, 0.0627, 0.1643, 0.125, 0.115, 0.0808, 0.211, 0.159, 0.158, 0.112, 0.220, 0.288, 0.443]
+k = [0.00218, 0.00158, 0.00245, 0.00213, 0.00344, 0.00322, 0.00341, 0.00300, 0.00610, 0.00457, 0.00461, 0.00621, 0.0132] 
+e = [0.0238, 0.0124, 0.0107, 0.00868, 0.0452, 0.0275, 0.0262, 0.0157, 0.101, 0.0751, 0.0334, 0.0433, 0.139]
+
+
+
+
+
+def simulacija_raztapljanja1(stevilo_zeljenih_razredov, dt, eks_cas, eks_norm, e_v_reaktorju, faktor_prestopnosti=1, faktor_raztapljanja=12.5):
+    relativna_hitrost = 0.02 #To je treba pogledat
+    
+    
+    viskoznost_vode = 0.89e-3 # Pas 25C
+    
+    #viskoznost_vode = 1.0016e-3 # Pas 20C
+    
+    difuzija_sukroza = 5.148e-10 # m^2/s 25C
+    
+    #difuzija_sukroza = 4.3e-10 # m^2/s 20C
+    
+    gostota_voda = 998.2 # kg/m^3
+    
+    masa_sukroza = 0.030  # kg
+    molekulska_masa_sukroza = 0.3423  # kg/mol
+    n_sukroza = masa_sukroza / molekulska_masa_sukroza #mol
+    gostota_sukroza = 1590 # kg/m^3
+    V_voda = 0.001 # m^3
+    V_sukroza = masa_sukroza / gostota_sukroza
+    c_sukroza_max = n_sukroza / V_voda
+    
+    #Lastnosti
+    k_raztapljanje = 6e-7 * faktor_raztapljanja # m/s
+    c_ravnotezna = 2100 # kg/m^3
+    c_ravnotezna = c_ravnotezna / molekulska_masa_sukroza # mol/m^3
+    
+    # Razdelitev delcev v razrede
+    
+    # Spremeni stevilo vseh delcev ce je previsoko in ne more poracunati
+    stevilo_vseh_delcev = 650000 # Zacetna vrednost za izracun mase
+    
+    
+    # min - spodnje meje vsakega razreda
+    # maks - zgornje meje vsakega razreda
+    # povprecje - povprecna vrednost vsakega razreda (iz tega se računa maso delcev v razredih)
+    # delez_delcev_razredi - delež napram vsem delcem, ki so v omenjenem razredu
+    # masa_delcev_razredi - masa delcev, ki so v omenjenem razredu
+    # Skupaj_sukroza - celotna masa, ki mora biti enaka zatehtani masi
+    skupaj_sukroza = 0     
+    
+    while skupaj_sukroza < masa_sukroza:
+        razredi = np.linspace(start=250, stop=500, endpoint=True, num=(stevilo_zeljenih_razredov+1))
+        min = razredi[:-1]
+        maks = razredi[1:]
+        povprecje = (min + maks) / 2
+
+        delez_delcev_razredi = np.zeros(stevilo_zeljenih_razredov)
+        masa_delcev_razredi = np.zeros(stevilo_zeljenih_razredov)
+
+        delez_delcev_razredi = scipy.stats.truncnorm(a=(-125/41.67), b=(125/41.67), loc=375, scale=41.67).cdf(maks) - scipy.stats.truncnorm(a=(-125/41.67), b=(125/41.67), loc=375, scale=41.67).cdf(min)
+        masa_delcev_razredi = delez_delcev_razredi * ((povprecje*0.0000005)**3) * gostota_sukroza * stevilo_vseh_delcev * 4/3 * pi
+        skupaj_sukroza = sum(masa_delcev_razredi)
+                
+        n_kristali = masa_delcev_razredi / molekulska_masa_sukroza
+        # Lahko spremenis dodatek k stevilu delcev za natancnejsi rezultat
+        stevilo_vseh_delcev += 50
+    
+    
+    print("V", stevilo_zeljenih_razredov, "razredih je natehtane: ",round(skupaj_sukroza,5), " kg sukroze")
+    
+    fig, (ax1) = plt.subplots(nrows=1, ncols=1, figsize=(6,4))
+    ax1.plot(povprecje, delez_delcev_razredi)
+    #ax1.set_xlabel("Premer delcev [μm]")
+    #ax1.set_ylabel("Gostota verjetnosti")
+    #ax1.set_title("Porazdelitev velikosti delcev")
+    #ax1.set_xticks([250,375,500])
+    
+    # Simulacija raztapljanja
+    
+    
+    # Koncentracija na zacetku - cas = 0
+    povprecje = povprecje * 0.000001 #Spremenim povprecje premera razreda delcev v metre
+    povprecje_0 = povprecje.copy()
+    povrsina_delcev_razredi = stevilo_vseh_delcev * delez_delcev_razredi * 4 * pi * (povprecje/2)**2
+    c_raztopina = 0
+    Re = np.zeros(len(povprecje))
+    Sh = np.zeros(len(povprecje))
+    k_prestopnost = np.zeros(len(povprecje))
+    difuzija_sh = np.zeros(len(povprecje))
+    c_ob_delcih = np.zeros(len(povprecje))
+    
+       
+    prestopnost_cas0 = []
+    prestopnost_cas1 = []
+    prestopnost_cas2 = []
+    cas = 0
+    spreminjanje_koncentracije = [0]
+    spreminjanje_casa = [0] 
+    while c_raztopina / c_sukroza_max < 0.999:
+        
+        #povprecje = povprecje.copy() 
+        #n_kristali = n_kristali.copy()
+        n_kristali_0 = n_kristali.copy()
+        #povrsina_delcev_razredi = povrsina_delcev_razredi.copy()
+        
+    
+        # Reynolds za vse razrede delcev in Sc, ki je skalar
+        Re = (gostota_voda * (e_v_reaktorju**(1/3)) * (povprecje**(4/3))) / viskoznost_vode
+        Sc = viskoznost_vode / (difuzija_sukroza * gostota_voda)
+       
+              
+        # Tukaj lahko uporabim formulo za Sh, ki ima notri intenziteto turbulence - I
+        # Sherwood za vse razrede delcev
+        
+        Sh = 2 + 0.47 * (Re**0.62)* (Sc**0.36) * (0.05/0.115)**0.17
+       
+        # difuzija_sh zato da lahko uporabim np.divide. Deli arraya, ampak če deli z nula ni error ampak =0
+        difuzija_sh = (difuzija_sukroza * Sh)    
+        # Prestopnost iz Sherwood formule. Če je premer 0, potem je tudi prestopnost 0
+        k_prestopnost = faktor_prestopnosti * np.divide(difuzija_sh, povprecje, out=np.zeros_like(difuzija_sh), where=povprecje!=0)
+        
+        #Izracuna povprecno prestopnost za vsak korak za graf
+        poz_prestopnost0 = k_prestopnost[10]
+        poz_prestopnost1 = k_prestopnost[50]
+        poz_prestopnost2 = k_prestopnost[80]
+        prestopnost_cas0.append(poz_prestopnost0)
+        prestopnost_cas1.append(poz_prestopnost1)
+        prestopnost_cas2.append(poz_prestopnost2)
+        
+        c_ob_delcih = ((k_prestopnost * c_raztopina) + (k_raztapljanje * c_ravnotezna)) / (k_prestopnost - k_raztapljanje)
+                
+        # Mnozina kristalov v razredu se zmanjša zaradi raztapljanja
+        n_kristali = n_kristali - dt * (k_raztapljanje * povrsina_delcev_razredi * (c_ravnotezna - c_ob_delcih))
+        # Ce se mnozina kristalov v razredu zniza v negativno spremeni vrednost v 0
+        n_kristali = n_kristali.clip(min=0)  
+
+        povprecje = povprecje * ((np.divide(n_kristali, n_kristali_0, out=np.zeros_like(n_kristali), where=n_kristali_0!=0))**(1/3))
+        povrsina_delcev_razredi = 4 * pi * (povprecje/2)**2 * stevilo_vseh_delcev * delez_delcev_razredi
+        
+        # Koliko nove mnozine se je raztopilo v tem koraku
+        mnozina_novih_raztopljenih_kristalov = sum(n_kristali_0) - sum(n_kristali)
+        
+        c_raztopina += mnozina_novih_raztopljenih_kristalov / V_voda
+        cas += dt
+        spreminjanje_casa.append(cas)
+        spreminjanje_koncentracije.append(c_raztopina / c_sukroza_max)
+        
+    print("Sukroza je raztopljena v", round(cas,2), "sekundah. ", "Koncentracija raztopine je: ", round(c_raztopina,4), "mol/m^3")
+    print("Konstanta raztapljanja je", k_raztapljanje*faktor_raztapljanja)
+    ax1.plot(spreminjanje_casa, spreminjanje_koncentracije, label="Simulacija")
+    ax1.set_xlabel("Čas [s]", fontsize=12)
+    ax1.set_ylabel("Normirana koncentracija", fontsize=12)
+    #[$mol/kg^3$]
+    ax1.set_label("Raztapljanje delcev")
+    ax1.set_title("Hitrost raztapljanja delcev")
+    
+    #eks_cas = [0,5,10,16,21,26,31,36,42,47,52,57,62,68,73,78,83,88,93,99]
+    #eks_norm=[0,0.14961484,0.598237816,0.872617844,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
+    ax1.set_xlim(left=0,right=25)
+    ax1.plot(eks_cas,eks_norm, label="Eksperiment")
+    #prestopnost_cas0 = np.array(prestopnost_cas0)
+    #prestopnost_cas1 = np.array(prestopnost_cas1)
+    #prestopnost_cas2 = np.array(prestopnost_cas2)
+    #prestopnost_cas0 = prestopnost_cas0[prestopnost_cas0 > 0]
+    #prestopnost_cas1 = prestopnost_cas1[prestopnost_cas1 > 0]
+    #prestopnost_cas2 = prestopnost_cas2[prestopnost_cas2 > 0]
+    #ax3.plot(spreminjanje_casa[:-137], prestopnost_cas0, label="Majhni delci", color="y")
+    #ax3.plot(spreminjanje_casa[:-51], prestopnost_cas1, label="Srednji delci", color="r")
+    #ax3.plot(spreminjanje_casa[:-1], prestopnost_cas2, label="Veliko delci", color = "g")
+    #ax3.set_xlabel("Čas [s]")
+    #ax3.set_ylabel("Prestopnost")
+    
+    fig.legend(bbox_to_anchor=(1.25, 0.6), prop={'size': 12})
+    fig.tight_layout()
+    plt.show()
+    
+    #return (spreminjanje_casa, spreminjanje_koncentracije)
+
+
+
+
+
+
+#simulacija_raztapljanja1(stevilo_zeljenih_razredov, dt, eks_cas, eks_norm, e_v_reaktorju, faktor_prestopnosti=1, faktor_raztapljanja=12.5)
+
+#'120RPM baffles no pitch 1L 30g'
+simulacija_raztapljanja1(100, 0.1,df["Time"], df["Savgol1"], e[0], faktor_raztapljanja=9.5)
+#'120RPM baffles pitch 1L 30g'
+simulacija_raztapljanja1(100, 0.1,df["Time"], df["Savgol2"], e[1], faktor_raztapljanja=9.5)
+#'120RPM no baffles no pitch 1L 30g'
+simulacija_raztapljanja1(100, 0.1,df["Time"], df["Savgol3"], e[2], faktor_raztapljanja=9.5)
+#'120RPM no baffles pitch 1L 30g'
+simulacija_raztapljanja1(100, 0.1,df["Time"], df["Savgol4"], e[3], faktor_raztapljanja=9.5)
+#'150RPM baffles no pitch 1L 30g
+simulacija_raztapljanja1(100, 0.1,df["Time"], df["Savgol5"], e[4], faktor_raztapljanja=9.5)
+#'150RPM baffles pitch 1L 30g'
+simulacija_raztapljanja1(100, 0.1,df["Time"], df["Savgol6"], e[5], faktor_raztapljanja=9.5)
+#'150RPM no baffles no pitch 1L 30g'
+simulacija_raztapljanja1(100, 0.1,df["Time"], df["Savgol7"], e[6], faktor_raztapljanja=9.5)
+#'150RPM no baffles pitch 1L 30g'
+simulacija_raztapljanja1(100, 0.1,df["Time"], df["Savgol8"], e[7], faktor_raztapljanja=9.5)
+#'200RPM baffles no pitch 1L 30
+simulacija_raztapljanja1(100, 0.1,df["Time"], df["Savgol9"], e[8], faktor_raztapljanja=9.5)
+#'200RPM baffles pitch 1L 30g'
+simulacija_raztapljanja1(100, 0.1,df["Time"], df["Savgol10"], e[9], faktor_raztapljanja=9.5)
+#'200RPM no baffles pitch 1L 30g'
+simulacija_raztapljanja1(100, 0.1,df["Time"], df["Savgol11"], e[10], faktor_raztapljanja=9.5)
+#'200RPM no baffles no pitch 1L 30g'
+simulacija_raztapljanja1(100, 0.1,df["Time"], df["Savgol12"], e[11], faktor_raztapljanja=9.5)
+#'300RPM no baffles no pitch 1L 30g'
+simulacija_raztapljanja1(100, 0.1,df["Time"], df["Savgol13"], e[12], faktor_raztapljanja=9.5)
