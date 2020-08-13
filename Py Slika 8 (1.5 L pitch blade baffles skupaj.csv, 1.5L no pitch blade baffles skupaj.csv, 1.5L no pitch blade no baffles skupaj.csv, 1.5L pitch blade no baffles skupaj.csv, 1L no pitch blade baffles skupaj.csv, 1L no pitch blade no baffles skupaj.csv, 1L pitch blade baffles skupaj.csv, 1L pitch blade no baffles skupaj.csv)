@@ -1,0 +1,245 @@
+#Sem preuredil tako da bi načeloma morala spremenit samo spremenljivko pot, do mape v kateri imas shranjene .csv datoteke
+
+
+import pandas as pd
+import matplotlib.pyplot as plt
+import scipy.signal as sp
+plt.style.use('seaborn-darkgrid')
+sfont = {'fontname':'serif'}
+plt.rcParams["font.family"] = "serif"
+
+#from os import listdir
+#from os.path import isfile, join
+#onlyfiles = [f for f in listdir(r"C:\Users\blaz-\Desktop\Mag ekspirementalno delo\casi pomesanja") if isfile(join(r"C:\Users\blaz-\Desktop\Mag ekspirementalno delo\casi pomesanja", f))]
+#for i in onlyfiles:
+#    print(i)
+
+pot = r"C:\Users\blaz-\Desktop\Mag ekspirementalno delo\casi pomesanja\\"
+
+
+fig, ((ax1,ax2), (ax3,ax4), (ax5,ax6), (ax7, ax8)) = plt.subplots(nrows=4, ncols=2, sharex=True, figsize=(12,12))
+
+filename = "1.5 L pitch blade baffles skupaj"
+celotna_datoteka= pot + filename + ".csv"
+
+podatki1 = pd.read_csv(celotna_datoteka, delimiter=";", decimal=",")
+podatki1 = podatki1.drop("Unnamed: 0", 1)
+
+podatki1["Std"] = podatki1.std(axis=1)
+a = podatki1.loc[:, podatki1.columns != "Std"]
+podatki1["Mean"] = a.mean(axis=1)
+
+podatki1_1 = podatki1.iloc[::2, :]
+podatki1_2 = podatki1.iloc[1::2, :]
+
+
+#naslovi = pd.Series("Sonda 1", "Sonda 2")
+#print(naslovi)
+
+filename2 = "1.5L pitch blade no baffles skupaj"
+celotna_datoteka2= pot + filename2 + ".csv"
+
+podatki2 = pd.read_csv(celotna_datoteka2, delimiter=";", decimal=",")
+podatki2 = podatki2.drop("Unnamed: 0", axis=1)
+
+podatki2["Std"] = podatki2.std(axis=1)
+b = podatki2.loc[:, podatki2.columns != "Std"]
+podatki2["Mean"] = b.mean(axis=1)
+
+podatki2_1 = podatki2.iloc[::2, :]
+podatki2_2 = podatki2.iloc[1::2, :]
+
+
+
+filename3 = "1.5L no pitch blade baffles skupaj.csv"
+celotna_datoteka3 = pot + filename3
+podatki3 = pd.read_csv(celotna_datoteka3, delimiter=";", decimal=",")
+podatki3 = podatki3.drop("Unnamed: 0", axis=1)
+
+podatki3["Std"] = podatki3.std(axis=1)
+c = podatki3.loc[:, podatki3.columns != "Std"]
+podatki3["Mean"] = c.mean(axis=1)
+
+podatki3_1 = podatki3.iloc[::2, :]
+podatki3_2 = podatki3.iloc[1::2, :]
+
+
+filename4 = "1.5L no pitch blade no baffles skupaj.csv"
+celotna_datoteka4 = pot + filename4
+podatki4 = pd.read_csv(celotna_datoteka4, delimiter=";", decimal=",")
+podatki4 = podatki4.drop("Unnamed: 0", axis=1)
+
+podatki4["Std"] = podatki4.std(axis=1)
+d = podatki4.loc[:, podatki4.columns != "Std"]
+podatki4["Mean"] = d.mean(axis=1)
+
+podatki4_1 = podatki4.iloc[::2, :]
+podatki4_2 = podatki4.iloc[1::2, :]
+
+
+filename5 = "1L pitch blade baffles skupaj.csv"
+celotna_datoteka5 = pot + filename5
+podatki5 = pd.read_csv(celotna_datoteka5, delimiter=";", decimal=",")
+podatki5 = podatki5.drop("Unnamed: 0", axis=1)
+
+podatki5["Std"] = podatki5.std(axis=1)
+e = podatki5.loc[:, podatki5.columns != "Std"]
+podatki5["Mean"] = e.mean(axis=1)
+
+podatki5_1 = podatki5.iloc[::2, :]
+podatki5_2 = podatki5.iloc[1::2, :]
+
+
+filename6 = "1L pitch blade no baffles skupaj.csv"
+celotna_datoteka6 = pot + filename6
+podatki6 = pd.read_csv(celotna_datoteka6, delimiter=";", decimal=",")
+podatki6 = podatki6.drop("Unnamed: 0", axis=1)
+
+podatki6["Std"] = podatki6.std(axis=1)
+f = podatki6.loc[:, podatki6.columns != "Std"]
+podatki6["Mean"] = f.mean(axis=1)
+
+podatki6_1 = podatki6.iloc[::2, :]
+podatki6_2 = podatki6.iloc[1::2, :]
+
+
+filename7 = "1L no pitch blade baffles skupaj.csv"
+celotna_datoteka7 = pot + filename7
+podatki7 = pd.read_csv(celotna_datoteka7, delimiter=";", decimal=",")
+podatki7 = podatki7.drop("Unnamed: 0", axis=1)
+
+podatki7["Std"] = podatki7.std(axis=1)
+g = podatki7.loc[:, podatki7.columns != "Std"]
+podatki7["Mean"] = g.mean(axis=1)
+
+podatki7_1 = podatki7.iloc[::2, :]
+podatki7_2 = podatki7.iloc[1::2, :]
+
+
+filename8 = "1L no pitch blade no baffles skupaj.csv"
+celotna_datoteka8 = pot + filename8
+podatki8 = pd.read_csv(celotna_datoteka8, delimiter=";", decimal=",")
+podatki8 = podatki8.drop("Unnamed: 0", axis=1)
+
+podatki8["Std"] = podatki8.std(axis=1)
+h = podatki8.loc[:, podatki8.columns != "Std"]
+podatki8["Mean"] = h.mean(axis=1)
+
+podatki8_1 = podatki8.iloc[::2, :]
+podatki8_2 = podatki8.iloc[1::2, :]
+
+
+
+
+#Simulacije
+#ax1.scatter([1,1.1,2,2.1,3,3.1,4,4.1], (30, 25, 16, 11.5, 14.5, 10, 6.8, 3), color="orange", marker=".")
+ax1.scatter([1,2,3,4], (30,16,14.5,6.8), color="maroon", marker=".")
+ax1.scatter([1.1,2.1,3.1,4.1], (25,11.5,10, 3), color="orange", marker=".")
+#ax1.scatter([1.2, 2.2, 3.2, 4.2], (59.7, 21.3, 14.5, 6.9), color="brown", marker=".")
+
+#ax5.scatter([1,1.1,2,2.1,3,3.1,4,4.1], (14,22,7,5.5,3.5,4,3.4,1), color="orange", marker=".")
+ax5.scatter([1,2,3,4], [14,7,3.5, 3.4], color="maroon", marker=".")
+ax5.scatter([1.1,2.1,3.1,4.1], (22,5.5,4,1), color="orange", marker=".")
+#ax5.scatter([1.2, 2.2, 3.2, 4.2], (27.7,7.8,5.9,3.4), color="brown", marker=".")
+
+#ax2.scatter([1,1.1,2,2.1,3,3.1,4,4.1], (50.5,56.5,10.5,17,23,9,6.5,7), color="orange", marker=".")
+ax2.scatter([1,2,3,4], (50.5,10.5,23,6.5), color="maroon", marker=".")
+ax2.scatter([1.1,2.1,3.1,4.1], (56.5,17,9,7), color="orange", marker=".")
+#ax2.scatter([1.2, 2.2, 3.2, 4.2], (233.1,44.5,30.3,12.4), color="brown", marker=".")
+
+#ax6.scatter([1,1.1,2,2.1,3,3.1,4,4.1], (27.5,20.5,9,8,7.5,6.5,6.5,5), color="orange", marker=".")
+ax6.scatter([1,2,3,4], (27.5,9,7.5,6.5), color="maroon", marker=".")
+ax6.scatter([1.1,2.1,3.1,4.1], (20.5,8,6.5,5), color="orange", marker=".")
+#ax6.scatter([1.2, 2.2, 3.2, 4.2], (32.4,11.9,10.2,8), color="brown", marker=".")
+
+#ax7.scatter([1,1.1,2,2.1,3,3.1,4,4.1], (26,21,7.5,8,5.5,6,3,3.5), color="orange", marker=".")
+ax7.scatter([1,2,3,4], (26,7.5,5.5,3), color="maroon", marker=".")
+ax7.scatter([1.1,2.1,3.1,4.1], (21,8,6,3.5), color="orange", marker=".")
+#ax7.scatter([1.2, 2.2, 3.2, 4.2], (38,11.9,7.5,4.2), color="brown", marker=".")
+
+#ax3.scatter([1,1.1,2,2.1,3,3.1], (12.5,13.5,4,5,3,4), color="orange", marker=".", label="Simulacija pomešanja na sondah")
+ax3.scatter([1,2,3], (12.5,4,3), color="maroon", marker=".")
+ax3.scatter([1.1,2.1,3.1], (13.5,5,4), color="orange", marker=".")
+#ax3.scatter([1.2, 2.2, 3.2], (20.8,6.9,5.9), color="brown", marker=".", label="Simulacija globalnega časa pomešanja")
+
+#ax8.scatter([1,1.1,2,2.1,3,3.1,4,4.1], (110,78, 27,24,14,12,4,5.5), color="orange", marker=".")
+ax8.scatter([1,2,3,4], (110, 27,14,4), color="maroon", marker=".", label="Simuliran odziv na sondi 1")
+ax8.scatter([1.1,2.1,3.1,4.1], (78,24,12,5.5), color="orange", marker=".", label="Simuliran odziv na sondi 2")
+#ax8.scatter([1.2, 2.2, 3.2, 4.2], (141.7,42.9,18.6,9.7), color="brown", marker=".")
+
+#ax4.scatter([1,1.1,2,2.1,3,3.1], (12.5,11,7.5,2.5,5,2), color="orange", marker=".")
+ax4.scatter([1,2,3], (12.5,7.5,5), color="maroon", marker=".")
+ax4.scatter([1.1,2.1,3.1], (11,2.5,2), color="orange", marker=".")
+#ax4.scatter([1.2, 2.2, 3.2], (27.4,8.2,5.8), color="brown", marker=".")
+
+
+#Eksperimenti
+#ax2.errorbar([1,1.1,2,2.1,3,3.1,4,4.1], podatki1["Mean"], podatki1["Std"], linestyle='None', marker=".", color="darkslategray", ecolor="cadetblue")
+ax2.errorbar([1,2,3,4], podatki1_1["Mean"], podatki1_1["Std"], linestyle='None', marker=".", color="darkslategray", ecolor="cadetblue")
+ax2.errorbar([1.1,2.1,3.1,4.1], podatki1_2["Mean"], podatki1_2["Std"], linestyle='None', marker=".", color="mediumturquoise", ecolor="turquoise")
+#ax2.set_title(filename[:-6])
+ax2.set_title("T2")
+
+#ax6.errorbar([1,1.1,2,2.1,3,3.1,4,4.1], podatki2["Mean"], podatki2["Std"], linestyle='None', marker=".", color="darkslategray", ecolor="cadetblue")
+ax6.errorbar([1,2,3,4], podatki2_1["Mean"], podatki2_1["Std"], linestyle='None', marker=".", color="darkslategray", ecolor="cadetblue")
+ax6.errorbar([1.1,2.1,3.1,4.1], podatki2_2["Mean"], podatki2_2["Std"], linestyle='None', marker=".", color="mediumturquoise", ecolor="turquoise")
+#ax6.set_title(filename2[:-6])
+ax6.set_title("T6")
+
+#ax8.errorbar([1,1.1,2,2.1,3,3.1,4,4.1], podatki3["Mean"], podatki3["Std"], linestyle='None', marker=".", color="darkslategray", ecolor="cadetblue")
+ax8.errorbar([1,2,3,4], podatki3_1["Mean"], podatki3_1["Std"], linestyle='None', marker=".", color="darkslategray", ecolor="cadetblue", label="Eksperimentalni odziv na sondi 1")
+ax8.errorbar([1.1,2.1,3.1,4.1], podatki3_2["Mean"], podatki3_2["Std"], linestyle='None', marker=".", color="mediumturquoise", ecolor="turquoise", label="Eksperimentalni odziv na sondi 2")
+#ax8.set_title(filename3[:-11])
+ax8.set_title("T8")
+
+#ax4.errorbar([1,1.1,2,2.1,3,3.1], podatki4["Mean"], podatki4["Std"], linestyle='None', marker=".", color="darkslategray", ecolor="cadetblue")
+ax4.errorbar([1,2,3], podatki4_1["Mean"], podatki4_1["Std"], linestyle='None', marker=".", color="darkslategray", ecolor="cadetblue")
+ax4.errorbar([1.1,2.1,3.1], podatki4_2["Mean"], podatki4_2["Std"], linestyle='None', marker=".", color="mediumturquoise", ecolor="turquoise")
+#ax4.set_title(filename4[:-11])
+ax4.set_title("T4")
+
+#ax1.errorbar([1,1.1,2,2.1,3,3.1,4,4.1], podatki5["Mean"], podatki5["Std"], linestyle='None', marker=".", color="darkslategray", ecolor="cadetblue")
+ax1.errorbar([1,2,3,4], podatki5_1["Mean"], podatki5_1["Std"], linestyle='None', marker=".", color="darkslategray", ecolor="cadetblue")
+ax1.errorbar([1.1,2.1,3.1,4.1], podatki5_2["Mean"], podatki5_2["Std"], linestyle='None', marker=".", color="mediumturquoise", ecolor="turquoise")
+#ax1.set_title(filename5[:-11])
+ax1.set_title("T1")
+
+#ax5.errorbar([1,1.1,2,2.1,3,3.1,4,4.1], podatki6["Mean"], podatki6["Std"], linestyle='None', marker=".", color="darkslategray", ecolor="cadetblue")
+ax5.errorbar([1,2,3,4], podatki6_1["Mean"], podatki6_1["Std"], linestyle='None', marker=".", color="darkslategray", ecolor="cadetblue")
+ax5.errorbar([1.1,2.1,3.1,4.1], podatki6_2["Mean"], podatki6_2["Std"], linestyle='None', marker=".", color="mediumturquoise", ecolor="turquoise")
+#ax5.set_title(filename6[:-11])
+ax5.set_title("T5")
+
+#ax7.errorbar([1,1.1,2,2.1,3,3.1,4,4.1], podatki7["Mean"], podatki7["Std"], linestyle='None', marker=".", color="darkslategray", ecolor="cadetblue")
+ax7.errorbar([1,2,3,4], podatki7_1["Mean"], podatki7_1["Std"], linestyle='None', marker=".", color="darkslategray", ecolor="cadetblue")
+ax7.errorbar([1.1,2.1,3.1,4.1], podatki7_2["Mean"], podatki7_2["Std"], linestyle='None', marker=".", color="mediumturquoise", ecolor="turquoise")
+#ax7.set_title(filename7[:-11])
+ax7.set_title("T7")
+
+#ax3.errorbar([1,1.1,2,2.1,3,3.1], podatki8["Mean"], podatki8["Std"], linestyle='None', marker=".", color="darkslategray", ecolor="cadetblue", label="Eksperimentalni podatki")
+#ax3.set_title(filename8[:-11])
+ax3.errorbar([1,2,3], podatki8_1["Mean"], podatki8_1["Std"], linestyle='None', marker=".", color="darkslategray", ecolor="cadetblue")
+ax3.errorbar([1.1,2.1,3.1], podatki8_2["Mean"], podatki8_2["Std"], linestyle='None', marker=".", color="mediumturquoise", ecolor="turquoise")
+ax3.set_title("T3")
+
+
+fig.text(0.03, 0.03, '30 vrt./min', va='center', rotation='0')
+fig.text(0.16, 0.03, '90 vrt./min', va='center', rotation='0')
+fig.text(0.288, 0.03, '120 vrt./min', va='center', rotation='0')
+fig.text(0.42, 0.03, '200 vrt./min', va='center', rotation='0')
+
+fig.text(0.53, 0.03, '30 vrt./min', va='center', rotation='0')
+fig.text(0.64, 0.03, '90 vrt./min', va='center', rotation='0')
+fig.text(0.788, 0.03, '120 vrt./min', va='center', rotation='0')
+fig.text(0.92, 0.03, '200 vrt./min', va='center', rotation='0')
+
+fig.text(0.00, 0.5, 'Čas pomešanja [s]', va='center', rotation='vertical')
+fig.text(0.5, -0.02, 'Hitrost mešanja', ha='center')
+
+ax8.get_xaxis().set_ticks([])
+ax7.get_xaxis().set_ticks([])
+#fig.tight_layout(rect=[0, 0.03, 1, 0.95])
+ax8.legend()
+fig.suptitle("Časi pomešanja t95%")
+fig.tight_layout(rect=[0, 0.03, 1, 0.95])
+plt.show()
