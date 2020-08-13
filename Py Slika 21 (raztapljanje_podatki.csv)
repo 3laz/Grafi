@@ -1,0 +1,28 @@
+# Samo spremeni pot v spremenljivki df
+
+import pandas as pd
+import matplotlib.pyplot as plt
+
+df =pd.read_csv(r"C:\Users\blaz-\Desktop\raztapljanje_podatki.csv", delimiter=";", decimal=",")
+
+
+plt.scatter(df.eksperiment[0], df.koeficient[0], color="darkorange")
+plt.scatter(df.eksperiment[1], df.koeficient[1], color="navy")
+plt.scatter(df.eksperiment[2], df.koeficient[2], color="darkgreen")
+plt.scatter(df.eksperiment[3], df.koeficient[3], color="brown")
+plt.scatter(df.eksperiment[4], df.koeficient[4], color="darkorange")
+plt.scatter(df.eksperiment[5], df.koeficient[5], color="navy")
+plt.scatter(df.eksperiment[6], df.koeficient[6], color="darkgreen")
+plt.scatter(df.eksperiment[7], df.koeficient[7], color="brown")
+plt.scatter(df.eksperiment[8], df.koeficient[8], color="darkorange")
+plt.scatter(df.eksperiment[9], df.koeficient[9], color="navy")
+plt.scatter(df.eksperiment[10], df.koeficient[10], color="darkgreen")
+plt.scatter(df.eksperiment[11], df.koeficient[11], color="brown")
+plt.scatter(df.eksperiment[12], df.koeficient[12], color="darkgreen")
+#plt.scatter(df.eksperiment[13], df.koeficient[13], color="darkgreen")
+
+plt.ylim(bottom=0.00002, top=0.00005)
+plt.xticks(rotation="40")
+plt.xlabel("Eksperiment")
+plt.ylabel("Koeficient prenosa snovi (m/s)")
+print(df)
