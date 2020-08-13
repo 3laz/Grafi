@@ -1,5 +1,12 @@
 #Ni T3 ampak T8. Sem sele zdaj ugotovil
 
+import pandas as pd
+import matplotlib.pyplot as plt
+import scipy.signal as sp
+plt.style.use('seaborn-darkgrid')
+sfont = {'fontname':'serif'}
+plt.rcParams["font.family"] = "serif"
+
 fig, ((ax1, ax2)) = plt.subplots(nrows=1, ncols=2, sharey=True, figsize=(12,8))
 
 podatki1 = pd.read_csv(r"C:\Users\blaz-\Desktop\Mag ekspirementalno delo\1.5L no pitch blade baffles skupaj\3_30 rpm.csv", delimiter=";", decimal=",")
