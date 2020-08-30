@@ -3,7 +3,7 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 
-df =pd.read_csv(r"C:\Users\blaz-\Desktop\raztapljanje_podatki.csv", delimiter=";", decimal=",")
+df =pd.read_csv(r"C:\Users\blaz-\Desktop\raztapljanje_podatki.csv", delimiter=";")
 
 
 plt.scatter(df.eksperiment[0], df.koeficient[0], color="darkorange")
