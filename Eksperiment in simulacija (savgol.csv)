@@ -188,28 +188,28 @@ e = [0.0238, 0.0124, 0.0107, 0.00868, 0.0452, 0.0275, 0.0262, 0.0157, 0.101, 0.0
 
 
 #'120RPM baffles no pitch 1L 30g'
-simulacija_raztapljanja1(100, 0.1,df["Time"], df["Savgol1"], e[0], faktor_raztapljanja=9.5)
+simulacija_raztapljanja1(100, 0.1,df["Time"], df["Savgol1"], e[0], faktor_raztapljanja=9)
 #'120RPM baffles pitch 1L 30g'
-simulacija_raztapljanja1(100, 0.1,df["Time"], df["Savgol2"], e[1], faktor_raztapljanja=9.5)
+simulacija_raztapljanja1(100, 0.1,df["Time"], df["Savgol2"], e[1], faktor_raztapljanja=9)
 #'120RPM no baffles no pitch 1L 30g'
-simulacija_raztapljanja1(100, 0.1,df["Time"], df["Savgol3"], e[2], faktor_raztapljanja=9.5)
+simulacija_raztapljanja1(100, 0.1,df["Time"], df["Savgol3"], e[2], faktor_raztapljanja=9)
 #'120RPM no baffles pitch 1L 30g'
-simulacija_raztapljanja1(100, 0.1,df["Time"], df["Savgol4"], e[3], faktor_raztapljanja=9.5)
+simulacija_raztapljanja1(100, 0.1,df["Time"], df["Savgol4"], e[3], faktor_raztapljanja=9)
 #'150RPM baffles no pitch 1L 30g
-simulacija_raztapljanja1(100, 0.1,df["Time"], df["Savgol5"], e[4], faktor_raztapljanja=9.5)
+simulacija_raztapljanja1(100, 0.1,df["Time"], df["Savgol5"], e[4], faktor_raztapljanja=9)
 #'150RPM baffles pitch 1L 30g'
-simulacija_raztapljanja1(100, 0.1,df["Time"], df["Savgol6"], e[5], faktor_raztapljanja=9.5)
+simulacija_raztapljanja1(100, 0.1,df["Time"], df["Savgol6"], e[5], faktor_raztapljanja=9)
 #'150RPM no baffles no pitch 1L 30g'
-simulacija_raztapljanja1(100, 0.1,df["Time"], df["Savgol7"], e[6], faktor_raztapljanja=9.5)
+simulacija_raztapljanja1(100, 0.1,df["Time"], df["Savgol7"], e[6], faktor_raztapljanja=9)
 #'150RPM no baffles pitch 1L 30g'
-simulacija_raztapljanja1(100, 0.1,df["Time"], df["Savgol8"], e[7], faktor_raztapljanja=9.5)
+simulacija_raztapljanja1(100, 0.1,df["Time"], df["Savgol8"], e[7], faktor_raztapljanja=9)
 #'200RPM baffles no pitch 1L 30
-simulacija_raztapljanja1(100, 0.1,df["Time"], df["Savgol9"], e[8], faktor_raztapljanja=9.5)
+simulacija_raztapljanja1(100, 0.1,df["Time"], df["Savgol9"], e[8], faktor_raztapljanja=9)
 #'200RPM baffles pitch 1L 30g'
-simulacija_raztapljanja1(100, 0.1,df["Time"], df["Savgol10"], e[9], faktor_raztapljanja=9.5)
+simulacija_raztapljanja1(100, 0.1,df["Time"], df["Savgol10"], e[9], faktor_raztapljanja=9)
 #'200RPM no baffles pitch 1L 30g'
-simulacija_raztapljanja1(100, 0.1,df["Time"], df["Savgol11"], e[10], faktor_raztapljanja=9.5)
+simulacija_raztapljanja1(100, 0.1,df["Time"], df["Savgol11"], e[10], faktor_raztapljanja=9)
 #'200RPM no baffles no pitch 1L 30g'
-simulacija_raztapljanja1(100, 0.1,df["Time"], df["Savgol12"], e[11], faktor_raztapljanja=9.5)
+simulacija_raztapljanja1(100, 0.1,df["Time"], df["Savgol12"], e[11], faktor_raztapljanja=9)
 #'300RPM no baffles no pitch 1L 30g'
-simulacija_raztapljanja1(100, 0.1,df["Time"], df["Savgol13"], e[12], faktor_raztapljanja=9.5)
+simulacija_raztapljanja1(100, 0.1,df["Time"], df["Savgol13"], e[12], faktor_raztapljanja=9)
