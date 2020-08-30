@@ -130,7 +130,7 @@ def simulacija_raztapljanja1(stevilo_zeljenih_razredov, dt, eks_cas, eks_norm, e
         prestopnost_cas1.append(poz_prestopnost1)
         prestopnost_cas2.append(poz_prestopnost2)
         
-        c_ob_delcih = ((k_prestopnost * c_raztopina) + (k_raztapljanje * c_ravnotezna)) / (k_prestopnost - k_raztapljanje)
+        c_ob_delcih = ((k_prestopnost * c_raztopina) + (k_raztapljanje * c_ravnotezna)) / (k_prestopnost + k_raztapljanje)
                 
         # Mnozina kristalov v razredu se zmanjša zaradi raztapljanja
         n_kristali = n_kristali - dt * (k_raztapljanje * povrsina_delcev_razredi * (c_ravnotezna - c_ob_delcih))
