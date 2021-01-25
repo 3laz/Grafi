@@ -1,3 +1,8 @@
+# Skripta za zajemanje prevodnosti
+
+Za Simona je fajl Conductivity_meter.py
+
+
 # Grafi
 Grafi za članek
 
